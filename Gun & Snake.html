@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Gun Water Snake Game</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: #fff;
+        text-align: center;
+        padding: 20px;
+    }
+    h1 { color: #00eaff; }
+    .choices button {
+        margin: 10px;
+        padding: 12px 25px;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 8px;
+        border: none;
+        background: #00ffd0;
+        color: #000000;
+        font-weight: bold;
+    }
+    .score {
+        margin-top: 20px;
+        font-size: 20px;
+    }
+    #log {
+        background: #222;
+        padding: 15px;
+        margin-top: 20px;
+        min-height: 150px;
+        border-radius: 8px;
+        overflow-y: auto;
+    }
+</style>
+</head>
+<body>
+
+<h1>🎮 Gun - Water - Snake Game</h1>
+<h3>First to 10 rounds wins!</h3>
+
+<div class="choices">
+    <button onclick="playRound('gun')">🔫 Gun</button>
+    <button onclick="playRound('water')">💧 Water</button>
+    <button onclick="playRound('snake')">🐍 Snake</button>
+</div>
+
+<div class="score">
+    <p>Player Score: <span id="playerScore">0</span></p>
+    <p>Computer Score: <span id="computerScore">0</span></p>
+    <p>Round: <span id="round">1</span> / 10</p>
+</div>
+
+<div id="log"></div>
+
+<script>
+class GunWaterSnake {
+    constructor() {
+        this.choices = ["gun", "water", "snake"];
+        this.playerScore = 0;
+        this.computerScore = 0;
+        this.round = 1;
+    }
+
+    getComputerChoice() {
+        return this.choices[Math.floor(Math.random() * 3)];
+    }
+
+    getRoundWinner(player, computer) {
+        if (player === computer) return "draw";
+
+        if (
+            (player === "gun" && computer === "snake") ||
+            (player === "snake" && computer === "water") ||
+            (player === "water" && computer === "gun")
+        ) {
+            return "player";
+        }
+        return "computer";
+    }
+}
+
+let game = new GunWaterSnake();
+
+function playRound(playerChoice) {
+    if (game.round > 10) {
+        return alert("Game Over! Refresh to play again.");
+    }
+
+    const computerChoice = game.getComputerChoice();
+    const winner = game.getRoundWinner(playerChoice, computerChoice);
+
+    let message = `<strong>Round ${game.round}:</strong>  
+        Player chose <b>${playerChoice}</b>, Computer chose <b>${computerChoice}</b> → `;
+
+    if (winner === "player") {
+        game.playerScore++;
+        message += "<span style='color:lightgreen;'>Player Wins!</span>";
+    } else if (winner === "computer") {
+        game.computerScore++;
+        message += "<span style='color:orange;'>Computer Wins!</span>";
+    } else {
+        message += "<span style='color:gray;'>It's a Draw!</span>";
+    }
+
+    document.getElementById("log").innerHTML += message + "<br>";
+
+    document.getElementById("playerScore").textContent = game.playerScore;
+    document.getElementById("computerScore").textContent = game.computerScore;
+    document.getElementById("round").textContent = game.round;
+
+    game.round++;
+
+    if (game.round === 11) {
+        declareWinner();
+    }
+}
+
+function declareWinner() {
+    let result = "";
+    if (game.playerScore > game.computerScore) {
+        result = "🎉 Player Wins the Game!";
+    } else if (game.computerScore > game.playerScore) {
+        result = "🤖 Computer Wins the Game!";
+    } else {
+        result = "🤝 It’s a Tie!";
+    }
+
+    document.getElementById("log").innerHTML += `<hr><h2>${result}</h2>`;
+}
+</script>
+
+</body>
+</html>
+
